@@ -26,17 +26,7 @@ export default function ChatPanel({ settings, onSettingsChange }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Load models on mount and when Ollama URL changes
-  useEffect(() => {
-    loadModels()
-  }, [settings.ollamaUrl])
-
-  // Auto-scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  async function loadModels() {
+  const loadModels = useCallback(async () => {
     try {
       setError(null)
       const data = await window.electronAPI.listModels()
@@ -47,7 +37,17 @@ export default function ChatPanel({ settings, onSettingsChange }: Props) {
     } catch {
       setError('Cannot reach Ollama. Make sure it is running at ' + settings.ollamaUrl)
     }
-  }
+  }, [onSettingsChange, settings.ollamaUrl, settings.selectedModel])
+
+  // Load models on mount and when Ollama URL changes
+  useEffect(() => {
+    loadModels()
+  }, [loadModels])
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const sendMessage = useCallback(async () => {
     const text = input.trim()

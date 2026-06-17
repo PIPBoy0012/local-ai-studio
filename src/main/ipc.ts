@@ -2,7 +2,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as http from 'http'
 import * as https from 'https'
-import { app } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import type { IpcMain, Dialog } from 'electron'
 import type { AppSettings, FileEntry } from '../shared/types'
 
@@ -108,7 +108,6 @@ function httpPostStream(
 export function registerIpcHandlers(
   ipcMain: IpcMain,
   dialog: Dialog,
-  _fs: typeof fs,
 ): void {
   // ── Settings ──────────────────────────────────────────────────────────────
   ipcMain.handle('settings:get', () => loadSettings())
@@ -203,7 +202,7 @@ export function registerIpcHandlers(
 
   // ── File: open folder dialog ──────────────────────────────────────────────
   ipcMain.handle('file:open-dialog', async (event) => {
-    const win = require('electron').BrowserWindow.fromWebContents(event.sender)
+    const win = BrowserWindow.fromWebContents(event.sender)
     const result = await dialog.showOpenDialog(win!, {
       properties: ['openDirectory'],
       title: 'Select Working Directory',

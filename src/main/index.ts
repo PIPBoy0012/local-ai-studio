@@ -103,7 +103,7 @@ function setupAutoUpdater(): void {
 
 app.whenReady().then(() => {
   createWindow()
-  registerIpcHandlers(ipcMain, dialog, fs)
+  registerIpcHandlers(ipcMain, dialog)
 
   if (!isDev) {
     setupAutoUpdater()
